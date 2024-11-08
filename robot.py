@@ -64,7 +64,7 @@ async def get_weather(city):
     """
     异步获取指定城市的天气信息
     :param city: 城市名称
-    :return: 天气描述和温度
+    :return: 包含天气描述、温度等信息的字符串
     """
     params = {
         'city': city,
@@ -81,9 +81,25 @@ async def get_weather(city):
                 data = await response.json()
                 if data.get('status') == "1":
                     weather_info = data['lives'][0]
-                    weather_description = weather_info['weather']
-                    temperature = weather_info['temperature']
-                    return f"{city}的天气是：{weather_description}，温度为 {temperature} °C"
+                    city_name = weather_info.get('city')
+                    weather_description = weather_info.get('weather')
+                    temperature = weather_info.get('temperature')
+                    wind_direction = weather_info.get('winddirection')
+                    wind_speed = weather_info.get('windspeed')
+                    humidity = weather_info.get('humidity')
+                    report_time = weather_info.get('reporttime')
+
+                    # 构造回复内容
+                    reply_content = (
+                        f"{city_name}的天气信息：\n"
+                        f"天气状况：{weather_description}\n"
+                        f"当前温度：{temperature} °C\n"
+                        f"风向：{wind_direction}\n"
+                        f"风速：{wind_speed} km/h\n"
+                        f"湿度：{humidity}%\n"
+                        f"发布时间：{report_time}\n"
+                    )
+                    return reply_content
                 else:
                     return "天气信息获取失败，请检查城市名称或API配置。"
     except aiohttp.ClientError as e:
@@ -93,61 +109,7 @@ async def get_weather(city):
         logger.error(f"获取天气信息时发生错误：{e}")
         return f"天气信息获取出现错误：{e}"
 
-def get_system_status():
-    """
-    获取系统状态信息，包括 CPU、内存和磁盘使用情况
-    :return: CPU、内存、磁盘使用情况及运行时间
-    """
-    try:
-        cpu_usage = psutil.cpu_percent(interval=1)
-        memory_info = psutil.virtual_memory()
-        total_memory = memory_info.total / (1024 * 1024)
-        used_memory = memory_info.used / (1024 * 1024)
-        memory_usage = (used_memory / total_memory) * 100
-
-        disk_info = psutil.disk_usage('/')
-        total_disk = disk_info.total / (1024 * 1024 * 1024)
-        used_disk = disk_info.used / (1024 * 1024 * 1024)
-        disk_usage = (used_disk / total_disk) * 100
-
-        # 计算运行时间
-        total_seconds = time.time() - start_time
-        days = total_seconds // (24 * 3600)
-        hours = (total_seconds % (24 * 3600)) // 3600
-        minutes = (total_seconds % (24 * 3600) % 3600) // 60
-        seconds = total_seconds % 60
-
-        return cpu_usage, memory_usage, disk_usage, (days, hours, minutes, seconds)
-    except Exception as e:
-        logger.error(f"获取系统状态时发生错误：{e}")
-        return None, None, None, None
-
-async def ping_test(domain):
-    """
-    执行 ping 测试以检查域名的可访问性
-    :param domain: 域名或 IP 地址
-    :return: 可访问性和响应时间
-    """
-    logger.info(f"正在进行ping测试，域名：{domain}")
-
-    try:
-        response_time = ping(domain)  # 进行 ping 测试
-        if response_time is not None:
-            return f"可以访问，响应时间：{response_time * 1000:.2f} ms"
-        else:
-            return "无法访问。"
-    except Exception as e:
-        logger.error(f"进行 ping 测试时发生错误：{e}")
-        return "进行 ping 测试时发生错误，请检查域名是否正确。"
-
 async def tcp_ping(domain, port=80, timeout=2):
-    """
-    检查指定域名和端口的 TCP 连接，同时测试 HTTP 和 HTTPS 状态码
-    :param domain: 域名或 IP 地址
-    :param port: 要检查的端口，默认是 80
-    :param timeout: 超时时间，单位是秒
-    :return: 返回连接结果
-    """
     logger.info(f"正在进行 TCP ping 测试，域名：{domain}，端口：{port}")
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -157,39 +119,7 @@ async def tcp_ping(domain, port=80, timeout=2):
             response_time = (time.time() - start_time) * 1000  # 转换为毫秒
              
             if result == 0:  # 连接成功
-                # 检查 HTTP 状态码
-                http_status_code = None
-                https_status_code = None
-
-                try:
-                    async with aiohttp.ClientSession() as session:
-                        async with session.get(f"http://{domain}") as response:
-                            http_status_code = response.status
-                except Exception as e:
-                    logger.warning(f"HTTP请求失败：{e}")
-
-                try:
-                    async with aiohttp.ClientSession() as session:
-                        async with session.get(f"https://{domain}") as response:
-                            https_status_code = response.status
-                except Exception as e:
-                    logger.warning(f"HTTPS请求失败：{e}")
-
-                # 构造回复内容
-                result_message = (
-                    f"TCP连接成功，响应时间：{response_time:.2f} ms\n"
-                )
-                if http_status_code is not None:
-                    result_message += f"HTTP状态码：{http_status_code}\n"
-                else:
-                    result_message += "HTTP请求失败\n"
-
-                if https_status_code is not None:
-                    result_message += f"HTTPS状态码：{https_status_code}\n"
-                else:
-                    result_message += "HTTPS请求失败\n"
-                 
-                return result_message.strip()  # 去除多余的空白
+                return f"TCP连接成功，响应时间：{response_time:.2f} ms"
             else:
                 return "无法连接到指定的端口。"
     except Exception as e:
@@ -197,13 +127,6 @@ async def tcp_ping(domain, port=80, timeout=2):
         return "进行 TCP 测试时发生错误，请检查域名和端口。"
 
 async def port_scan(domain, start_port, end_port):
-    """
-    扫描指定域名的多个端口，返回开放的端口列表
-    :param domain: 域名或 IP 地址
-    :param start_port: 起始端口
-    :param end_port: 结束端口
-    :return: 返回开放的端口列表
-    """
     logger.info(f"正在进行端口扫描，域名：{domain}，端口范围：{start_port}-{end_port}")
     open_ports = []
 
@@ -235,6 +158,43 @@ async def port_scan(domain, start_port, end_port):
     else:
         return "没有发现开放的端口。"
 
+async def ping_test(domain):
+    logger.info(f"正在进行ping测试，域名：{domain}")
+    try:
+        response_time = ping(domain)  # 进行 ping 测试
+        if response_time is not None:
+            return f"可以访问，响应时间：{response_time * 1000:.2f} ms"
+        else:
+            return "无法访问。"
+    except Exception as e:
+        logger.error(f"进行 ping 测试时发生错误：{e}")
+        return "进行 ping 测试时发生错误，请检查域名是否正确。"
+
+def get_system_status():
+    try:
+        cpu_usage = psutil.cpu_percent(interval=1)
+        memory_info = psutil.virtual_memory()
+        total_memory = memory_info.total / (1024 * 1024)
+        used_memory = memory_info.used / (1024 * 1024)
+        memory_usage = (used_memory / total_memory) * 100
+
+        disk_info = psutil.disk_usage('/')
+        total_disk = disk_info.total / (1024 * 1024 * 1024)
+        used_disk = disk_info.used / (1024 * 1024 * 1024)
+        disk_usage = (used_disk / total_disk) * 100
+        
+        # 计算运行时间
+        total_seconds = time.time() - start_time
+        days = total_seconds // (24 * 3600)
+        hours = (total_seconds % (24 * 3600)) // 3600
+        minutes = (total_seconds % (24 * 3600) % 3600) // 60
+        seconds = total_seconds % 60
+
+        return cpu_usage, memory_usage, disk_usage, (days, hours, minutes, seconds)
+    except Exception as e:
+        logger.error(f"获取系统状态时发生错误：{e}")
+        return None, None, None, None
+
 async def _message_handler(event, message: qqbot.Message):
     """
     处理接收到的消息并生成相应的回复
@@ -242,7 +202,7 @@ async def _message_handler(event, message: qqbot.Message):
     :param message: 接收到的消息对象
     """
     msg_api = qqbot.AsyncMessageAPI(t_token, False)
-    
+
     # 处理消息内容，去掉@用户部分
     content = re.sub(r'<@!?\d+>', '', message.content).strip()
     logger.info(f"收到消息：{content}")  # 记录收到的消息
@@ -251,12 +211,8 @@ async def _message_handler(event, message: qqbot.Message):
     if content.startswith("/"):
         content = content[1:].strip()
 
-    # 自动问答功能
-    if content in auto_responses:
-        reply_content = auto_responses[content]
-        logger.info(f"回复自动问答：{reply_content}")
-    elif content == "运行状态":
-        # 获取系统状态
+    global is_running
+    if content == "运行状态":
         cpu_usage, memory_usage, disk_usage, runtime = get_system_status()
         if cpu_usage is not None:  # 确保状态正常
             days, hours, minutes, seconds = runtime
