@@ -33,10 +33,6 @@ file_handler.setLevel(logging.DEBUG)  # 更改级别为 DEBUG
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 logger.addHandler(file_handler)
 
-# 添加 AccessKeyId 和 AccessKeySecret
-ACCESS_KEY_ID = "<Your_AccessKeyId>"  # 替换为你的阿里云 AccessKeyId
-ACCESS_KEY_SECRET = "<Your_AccessKeySecret>"  # 替换为你的阿里云 AccessKeySecret
-
 # 从配置文件读取机器人的信息
 test_config = YamlUtil.read(os.path.join(os.path.dirname(__file__), "config.yaml"))
 
@@ -252,6 +248,18 @@ async def _message_handler(event, message: qqbot.Message):
         else:
             reply_content = "格式不正确，请使用：tcping <域名> [<端口>]"
             logger.warning(f"tcping 请求格式不正确：{content}")
+    elif content.startswith("端口测试"):
+        parts = content.split()
+        domain = parts[1] if len(parts) > 1 else ''
+        start_port = int(parts[2]) if len(parts) > 2 else 1  # 默认起始端口为 1
+        end_port = int(parts[3]) if len(parts) > 3 else 1024  # 默认结束端口为 1024
+        
+        if domain:
+            reply_content = await port_scan(domain, start_port, end_port)
+            logger.info(f"回复端口测试请求：{reply_content}")
+        else:
+            reply_content = "格式不正确，请使用：端口测试 <域名> [<起始端口>] [<结束端口>]"
+            logger.warning(f"端口测试请求格式不正确：{content}")
     elif content.startswith("端口扫描"):
         parts = content.split()
         domain = parts[1] if len(parts) > 1 else ''
@@ -279,6 +287,7 @@ def run_bot():
     qqbot.async_listen_events(t_token, False, qqbot_handler)
 
 if __name__ == "__main__":
+    start_time = time.time()  # 记录开始时间
     # 创建并启动守护进程
     bot_process = multiprocessing.Process(target=run_bot)
     bot_process.daemon = True  # 设置为守护进程
