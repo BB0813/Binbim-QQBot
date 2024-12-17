@@ -1,21 +1,23 @@
+# -*- coding: utf-8 -*-
+import asyncio
 import os
 import time
 import psutil
 import aiohttp
-import requests  # 可能不再需要
-import qqbot
-from qqbot.core.util.yaml_util import YamlUtil
 import re
 import logging
 import multiprocessing
 from ping3 import ping  # 只导入 ping 函数
-import asyncio
 import hashlib
 import urllib.parse
 import hmac
 import base64
 import socket  # 新增的模块用于 TCP ping 和端口扫描
 from concurrent.futures import ThreadPoolExecutor, as_completed  # 导入线程池
+from botpy import logging as botpy_logging
+from botpy.client import Client, Intents  # 从 botpy.client 模块导入 Client 和 Intents 类
+from botpy.message import Message
+from botpy.ext.cog_yaml import read
 
 # 设置日志配置
 logger = logging.getLogger(__name__)
@@ -34,7 +36,12 @@ file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelnam
 logger.addHandler(file_handler)
 
 # 从配置文件读取机器人的信息
-test_config = YamlUtil.read(os.path.join(os.path.dirname(__file__), "config.yaml"))
+test_config = read(os.path.join(os.path.dirname(__file__), "config.yaml"))
+
+# 确保 config.yaml 中包含正确的键
+if "appid" not in test_config or "token" not in test_config:
+    logger.error("config.yaml 文件中缺少必要的键，请检查配置文件。")
+    raise ValueError("config.yaml 文件中缺少必要的键")
 
 API_KEY = test_config["amap"].get("api_key")  # 获取API_KEY
 if not API_KEY:
@@ -47,7 +54,6 @@ WEATHER_API_URL = "https://restapi.amap.com/v3/weather/weatherInfo"  # 高德天
 
 # 状态变量
 is_running = True
-t_token = qqbot.Token(test_config["token"]["appid"], test_config["token"]["token"])
 
 # 添加自动问答词库
 auto_responses = {
@@ -55,6 +61,9 @@ auto_responses = {
     "帮我": "请问需要什么帮助呢？",
     "再见": "再见，祝您有美好的一天！"
 }
+
+# 定义 start_time 变量
+start_time = time.time()  # 记录开始时间
 
 async def get_weather(city):
     """
@@ -191,103 +200,108 @@ def get_system_status():
         logger.error(f"获取系统状态时发生错误：{e}")
         return None, None, None, None
 
-async def _message_handler(event, message: qqbot.Message):
-    """
-    处理接收到的消息并生成相应的回复
-    :param event: 消息事件
-    :param message: 接收到的消息对象
-    """
-    msg_api = qqbot.AsyncMessageAPI(t_token, False)
+# 自定义客户端类
+class MyClient(Client):
+    async def on_ready(self):
+        logger.info(f"机器人 「{self.robot.name}」 on_ready!")
 
-    # 处理消息内容，去掉@用户部分
-    content = re.sub(r'<@!?\d+>', '', message.content).strip()
-    logger.info(f"收到消息：{content}")  # 记录收到的消息
+    async def on_at_message_create(self, message: Message):
+        logger.info(message.author.avatar)
+        if "sleep" in message.content:
+            await asyncio.sleep(10)
+        logger.info(message.author.username)
 
-    # 去掉前缀 /
-    if content.startswith("/"):
-        content = content[1:].strip()
+        # 处理消息内容，去掉@用户部分
+        content = re.sub(r'<@!?\d+>', '', message.content).strip()
+        logger.info(f"收到消息：{content}")  # 记录收到的消息
 
-    global is_running
-    if content == "运行状态":
-        cpu_usage, memory_usage, disk_usage, runtime = get_system_status()
-        if cpu_usage is not None:  # 确保状态正常
-            days, hours, minutes, seconds = runtime
-            reply_content = (
-                f"当前状态：运行中\n"
-                f"CPU占用：{cpu_usage}%\n"
-                f"内存占用：{memory_usage:.2f}%\n"
-                f"存储占用：{disk_usage:.2f}%\n"
-                f"总运行时间：{int(days)}天 {int(hours)}小时 {int(minutes)}分钟 {seconds:.2f}秒"
-            )
-            logger.info("回复运行状态请求")
-        else:
-            reply_content = "获取系统状态时发生错误。"
-    elif content.startswith("天气"):
-        city = content[len("天气"):].strip()
-        if city:
-            reply_content = await get_weather(city)
-            logger.info(f"回复天气请求：{reply_content}")
-        else:
-            reply_content = "格式不正确，请使用：天气 <城市名>"
-            logger.warning(f"天气请求格式不正确：{content}")
-    elif content.startswith("ping"):
-        domain = content[len("ping"):].strip()  # 获取域名
-        if domain:
-            reply_content = await ping_test(domain)
-            logger.info(f"回复 ping 请求：{reply_content}")
-        else:
-            reply_content = "格式不正确，请使用：ping <域名>"
-            logger.warning(f"ping 请求格式不正确：{content}")
-    elif content.startswith("tcping"):
-        parts = content.split()
-        domain = parts[1] if len(parts) > 1 else ''
-        port = int(parts[2]) if len(parts) > 2 else 80  # 默认端口为 80
-        if domain:
-            reply_content = await tcp_ping(domain, port)
-            logger.info(f"回复 tcp_ping 请求：{reply_content}")
-        else:
-            reply_content = "格式不正确，请使用：tcping <域名> [<端口>]"
-            logger.warning(f"tcping 请求格式不正确：{content}")
-    elif content.startswith("端口测试"):
-        parts = content.split()
-        domain = parts[1] if len(parts) > 1 else ''
-        start_port = int(parts[2]) if len(parts) > 2 else 1  # 默认起始端口为 1
-        end_port = int(parts[3]) if len(parts) > 3 else 1024  # 默认结束端口为 1024
-        
-        if domain:
-            reply_content = await port_scan(domain, start_port, end_port)
-            logger.info(f"回复端口测试请求：{reply_content}")
-        else:
-            reply_content = "格式不正确，请使用：端口测试 <域名> [<起始端口>] [<结束端口>]"
-            logger.warning(f"端口测试请求格式不正确：{content}")
-    elif content.startswith("端口扫描"):
-        parts = content.split()
-        domain = parts[1] if len(parts) > 1 else ''
-        start_port = int(parts[2]) if len(parts) > 2 else 1  # 默认起始端口为 1
-        end_port = int(parts[3]) if len(parts) > 3 else 1024  # 默认结束端口为 1024
-        
-        if domain:
-            reply_content = await port_scan(domain, start_port, end_port)
-            logger.info(f"回复端口扫描请求：{reply_content}")
-        else:
-            reply_content = "格式不正确，请使用：端口扫描 <域名> <起始端口> <结束端口>"
-            logger.warning(f"端口扫描请求格式不正确：{content}")
-    else:
-        reply_content = "我不太明白你说的是什么..."
-        logger.warning(f"无法理解的请求：{content}")
+        # 去掉前缀 /
+        if content.startswith("/"):
+            content = content[1:].strip()
 
-    # 回复消息
-    message_to_send = qqbot.MessageSendRequest(content=reply_content, msg_id=message.id)
-    await msg_api.post_message(message.channel_id, message_to_send)
+        global is_running
+        reply_content = ""
+        if content == "运行状态":
+            cpu_usage, memory_usage, disk_usage, runtime = get_system_status()
+            if cpu_usage is not None:  # 确保状态正常
+                days, hours, minutes, seconds = runtime
+                reply_content = (
+                    f"当前状态：运行中\n"
+                    f"CPU占用：{cpu_usage}%\n"
+                    f"内存占用：{memory_usage:.2f}%\n"
+                    f"存储占用：{disk_usage:.2f}%\n"
+                    f"总运行时间：{int(days)}天 {int(hours)}小时 {int(minutes)}分钟 {seconds:.2f}秒"
+                )
+                logger.info("回复运行状态请求")
+            else:
+                reply_content = "获取系统状态时发生错误。"
+        elif content.startswith("天气"):
+            city = content[len("天气"):].strip()
+            if city:
+                reply_content = await get_weather(city)
+                logger.info(f"回复天气请求：{reply_content}")
+            else:
+                reply_content = "格式不正确，请使用：天气 <城市名>"
+                logger.warning(f"天气请求格式不正确：{content}")
+        elif content.startswith("ping"):
+            domain = content[len("ping"):].strip()  # 获取域名
+            if domain:
+                reply_content = await ping_test(domain)
+                logger.info(f"回复 ping 请求：{reply_content}")
+            else:
+                reply_content = "格式不正确，请使用：ping <域名>"
+                logger.warning(f"ping 请求格式不正确：{content}")
+        elif content.startswith("tcping"):
+            parts = content.split()
+            domain = parts[1] if len(parts) > 1 else ''
+            port = int(parts[2]) if len(parts) > 2 else 80  # 默认端口为 80
+            if domain:
+                reply_content = await tcp_ping(domain, port)
+                logger.info(f"回复 tcp_ping 请求：{reply_content}")
+            else:
+                reply_content = "格式不正确，请使用：tcping <域名> [<端口>]"
+                logger.warning(f"tcping 请求格式不正确：{content}")
+        elif content.startswith("端口测试"):
+            parts = content.split()
+            domain = parts[1] if len(parts) > 1 else ''
+            start_port = int(parts[2]) if len(parts) > 2 else 1  # 默认起始端口为 1
+            end_port = int(parts[3]) if len(parts) > 3 else 1024  # 默认结束端口为 1024
+            
+            if domain:
+                reply_content = await port_scan(domain, start_port, end_port)
+                logger.info(f"回复端口测试请求：{reply_content}")
+            else:
+                reply_content = "格式不正确，请使用：端口测试 <域名> [<起始端口>] [<结束端口>]"
+                logger.warning(f"端口测试请求格式不正确：{content}")
+        elif content.startswith("端口扫描"):
+            parts = content.split()
+            domain = parts[1] if len(parts) > 1 else ''
+            start_port = int(parts[2]) if len(parts) > 2 else 1  # 默认起始端口为 1
+            end_port = int(parts[3]) if len(parts) > 3 else 1024  # 默认结束端口为 1024
+            
+            if domain:
+                reply_content = await port_scan(domain, start_port, end_port)
+                logger.info(f"回复端口扫描请求：{reply_content}")
+            else:
+                reply_content = "格式不正确，请使用：端口扫描 <域名> <起始端口> <结束端口>"
+                logger.warning(f"端口扫描请求格式不正确：{content}")
+        else:
+            reply_content = "我不太明白你说的是什么..."
+            logger.warning(f"无法理解的请求：{content}")
+
+        # 回复消息
+        if reply_content:
+            await message.reply(content=reply_content)
 
 def run_bot():
     """运行机器人，作为守护进程"""
     logger.info("机器人启动中...")
-    qqbot_handler = qqbot.Handler(qqbot.HandlerType.AT_MESSAGE_EVENT_HANDLER, _message_handler)
-    qqbot.async_listen_events(t_token, False, qqbot_handler)
+    # 通过kwargs，设置需要监听的事件通道
+    intents = Intents(public_guild_messages=True)
+    client = MyClient(intents=intents)
+    client.run(appid=test_config["appid"], secret=test_config["token"])
 
 if __name__ == "__main__":
-    start_time = time.time()  # 记录开始时间
     # 创建并启动守护进程
     bot_process = multiprocessing.Process(target=run_bot)
     bot_process.daemon = True  # 设置为守护进程
