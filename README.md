@@ -36,13 +36,15 @@ Binbim-QQBot/
 ## 项目更新日志
 > 2024.11.5：发布 1.0 版本。
 > 2024.11.8：发布 1.1 版本 本次更新仅补充部署教程及维修部分BUG 因新架构出现巨大问题 正在重构项目所有源码
+> 2024.12.17 发布V0.0.1Beta版本 本次更新将代码完全重构
+> 2024.12.19 发布V0.0.2Beta版本 本次更新重新编写了依赖库安装脚本 并修复了部分BUG
 
 ## 后续将会逐步增加功能以及新项目 求各位给个 Star
 ## 本项目已增加 Apache-2.0 开源协议
 
 > **联系方式**
->> 个人主页: `https://bb0813.github.io/Binbim_homepage/`
->> 个人blog: `https://xfast.firefun.cn/`
+>> 个人主页: `https://home.binbim.asia/`
+>> 个人blog:（暂无法访问） `https://xfast.firefun.cn/`
 >> 邮箱: `binbim@binbim.asia`
 >> QQ 群组: `619925543`
 >> Telegram 频道: `@binbimasia`
