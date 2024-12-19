@@ -1,5 +1,4 @@
 # Binbim-QQbot 项目说明
-# 由于原qqbot库已逐步停止服务 该框架暂停更新 正在编写新框架
 # 已恢复正常功能 库已迁移完成 可正常使用
 ## 项目简介
 Binbim-QQbot 是一款基于 Python 语言的 QQ 机器人框架，使用 aiohttp 库实现了 QQ 官方协议的 HTTP API 接口，并使用 psutil 库实现了系统监控功能。
