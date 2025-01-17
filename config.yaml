@@ -1,8 +1,5 @@
-appid: "xxxxxxx"
-token: "xxxxxxxxxxxxxxxxxxxx"
-  #申请地址为https://q.qq.com/（QQ开放平台）创建机器人后 将appid和token填入上述位置
+appid: "102073909"
+token: "MTahpx5DLTbkt2BKTcmw6GQaku5GRcny"
 amap:
-  api_key: "填入你的高德地图API Key"
-  #申请地址为https://lbs.amap.com/（高德开放平台）也可使用其他API接口平台 自行在robot.py文件中第39行修改API-URL
+  api_key: "3d70d2b6241d32aa5d8c0a2f7a4ab5d1"
 
-#Binbim-QQBot_V0.0.1 by Binbim

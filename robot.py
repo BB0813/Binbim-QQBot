@@ -23,13 +23,7 @@ from botpy.ext.cog_yaml import read
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)  # 更改级别为 DEBUG
 
-# 控制台输出日志
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)  # 更改级别为 DEBUG
-console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-logger.addHandler(console_handler)
-
-# 文件输出日志
+# 文件输出日志（仅输出到文件，不输出到控制台）
 file_handler = logging.FileHandler('robot.log', mode='a', encoding='utf-8')
 file_handler.setLevel(logging.DEBUG)  # 更改级别为 DEBUG
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))

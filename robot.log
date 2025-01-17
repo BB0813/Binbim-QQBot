@@ -1,0 +1,84 @@
+2024-12-18 00:38:40,986 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2024-12-18 00:38:41,384 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2024-12-18 00:38:41,385 - __mp_main__ - INFO - 机器人启动中...
+2024-12-18 00:52:55,590 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2024-12-18 00:52:55,902 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2024-12-18 00:52:55,905 - __mp_main__ - INFO - 机器人启动中...
+2024-12-18 00:52:56,645 - __mp_main__ - INFO - 机器人 「Binbim_ProMax-测试中」 on_ready!
+2024-12-18 00:53:22,267 - __mp_main__ - INFO - https://qqchannel-profile-1251316161.file.myqcloud.com/172807245059213716843577654995726660254047?t=1728072450
+2024-12-18 00:53:22,267 - __mp_main__ - INFO - GhostStarof
+2024-12-18 00:53:22,267 - __mp_main__ - INFO - 收到消息：/ping home.binbim.asia
+2024-12-18 00:53:22,267 - __mp_main__ - INFO - 正在进行ping测试，域名：home.binbim.asia
+2024-12-18 00:53:26,594 - __mp_main__ - INFO - 回复 ping 请求：无法访问。
+2024-12-18 00:54:10,473 - __mp_main__ - INFO - https://qqchannel-profile-1251316161.file.myqcloud.com/172807245059213716843577654995726660254047?t=1728072450
+2024-12-18 00:54:10,473 - __mp_main__ - INFO - GhostStarof
+2024-12-18 00:54:10,473 - __mp_main__ - INFO - 收到消息：/tcping home.binbim.asia
+2024-12-18 00:54:10,473 - __mp_main__ - INFO - 正在进行 TCP ping 测试，域名：home.binbim.asia，端口：80
+2024-12-18 00:54:12,485 - __mp_main__ - INFO - 回复 tcp_ping 请求：无法连接到指定的端口。
+2024-12-18 00:54:19,378 - __main__ - INFO - 程序被手动终止。
+2024-12-18 07:08:12,098 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2024-12-18 07:08:12,430 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2024-12-18 07:08:12,430 - __mp_main__ - INFO - 机器人启动中...
+2024-12-18 07:08:13,299 - __mp_main__ - INFO - 机器人 「Binbim_ProMax-测试中」 on_ready!
+2024-12-18 07:08:38,973 - __mp_main__ - INFO - https://qqchannel-profile-1251316161.file.myqcloud.com/16707331844ccfb9d53a168def?t=1670733184
+2024-12-18 07:08:38,973 - __mp_main__ - INFO - 小鲨鱼
+2024-12-18 07:08:38,973 - __mp_main__ - INFO - 收到消息：/运行状态
+2024-12-18 07:08:39,983 - __mp_main__ - INFO - 回复运行状态请求
+2024-12-18 07:10:38,211 - __mp_main__ - INFO - https://qqchannel-profile-1251316161.file.myqcloud.com/172807245059213716843577654995726660254047?t=1728072450
+2024-12-18 07:10:38,212 - __mp_main__ - INFO - GhostStarof
+2024-12-18 07:10:38,212 - __mp_main__ - INFO - 收到消息：/ping baidu.com
+2024-12-18 07:10:38,212 - __mp_main__ - INFO - 正在进行ping测试，域名：baidu.com
+2024-12-18 07:10:38,288 - __mp_main__ - INFO - 回复 ping 请求：可以访问，响应时间：51.66 ms
+2024-12-18 07:24:02,486 - __main__ - INFO - 程序被手动终止。
+2024-12-18 08:12:29,566 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2024-12-18 08:12:29,694 - __main__ - INFO - Webhook服务器启动中...
+2024-12-18 08:12:29,961 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2024-12-18 08:12:29,961 - __mp_main__ - INFO - 机器人启动中...
+2024-12-18 08:12:30,669 - __mp_main__ - INFO - 机器人 「Binbim_ProMax-测试中」 on_ready!
+2024-12-18 08:44:13,414 - __mp_main__ - INFO - https://qqchannel-profile-1251316161.file.myqcloud.com/172807245059213716843577654995726660254047?t=1728072450
+2024-12-18 08:44:13,415 - __mp_main__ - INFO - GhostStarof
+2024-12-18 08:44:13,415 - __mp_main__ - INFO - 收到消息：/运行状态
+2024-12-18 08:44:14,438 - __mp_main__ - INFO - 回复运行状态请求
+2024-12-18 09:42:27,635 - __mp_main__ - INFO - https://qqchannel-profile-1251316161.file.myqcloud.com/172807245059213716843577654995726660254047?t=1728072450
+2024-12-18 09:42:27,642 - __mp_main__ - INFO - GhostStarof
+2024-12-18 09:42:27,642 - __mp_main__ - INFO - 收到消息：/运行状态
+2024-12-18 09:42:28,652 - __mp_main__ - INFO - 回复运行状态请求
+2024-12-22 00:05:17,326 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2024-12-22 00:05:17,803 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2024-12-22 00:05:17,804 - __mp_main__ - INFO - 机器人启动中...
+2024-12-22 00:05:18,545 - __mp_main__ - INFO - 机器人 「Binbim_ProMax-测试中」 on_ready!
+2025-01-01 05:55:36,635 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-01 05:55:36,981 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-01 05:55:36,982 - __mp_main__ - INFO - 机器人启动中...
+2025-01-01 05:55:37,842 - __mp_main__ - INFO - 机器人 「Binbim_ProMax-测试中」 on_ready!
+2025-01-01 05:56:12,001 - __mp_main__ - INFO - https://qqchannel-profile-1251316161.file.myqcloud.com/172807245059213716843577654995726660254047?t=1728072450
+2025-01-01 05:56:12,001 - __mp_main__ - INFO - BinbimTech
+2025-01-01 05:56:12,002 - __mp_main__ - INFO - 收到消息：/运行状态
+2025-01-01 05:56:13,009 - __mp_main__ - INFO - 回复运行状态请求
+2025-01-05 13:54:21,228 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-05 13:54:21,598 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-05 13:54:21,598 - __mp_main__ - INFO - 机器人启动中...
+2025-01-05 13:54:22,467 - __mp_main__ - INFO - 机器人 「Binbim_ProMax-测试中」 on_ready!
+2025-01-06 17:20:52,729 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-06 17:20:53,064 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-06 17:20:53,064 - __mp_main__ - INFO - 机器人启动中...
+2025-01-06 17:20:53,974 - __mp_main__ - INFO - 机器人 「Binbim_ProMax-测试中」 on_ready!
+2025-01-06 17:21:08,551 - __mp_main__ - INFO - https://qqchannel-profile-1251316161.file.myqcloud.com/172807245059213716843577654995726660254047?t=1728072450
+2025-01-06 17:21:08,551 - __mp_main__ - INFO - BinbimTech
+2025-01-06 17:21:08,552 - __mp_main__ - INFO - 收到消息：/运行状态
+2025-01-06 17:21:09,562 - __mp_main__ - INFO - 回复运行状态请求
+2025-01-17 22:28:19,807 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-17 22:28:20,164 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-17 22:28:20,164 - __mp_main__ - INFO - 机器人启动中...
+2025-01-17 22:28:21,110 - __mp_main__ - INFO - 机器人 「Binbim_ProMax-测试中」 on_ready!
+2025-01-17 22:28:23,523 - __main__ - INFO - 程序被手动终止。
+2025-01-17 22:43:58,056 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-17 22:43:58,404 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-17 22:43:58,405 - __mp_main__ - INFO - 机器人启动中...
+2025-01-17 22:43:59,296 - __mp_main__ - INFO - 机器人 「Binbim_ProMax-测试中」 on_ready!
+2025-01-17 22:44:17,507 - __main__ - INFO - 程序被手动终止。
+2025-01-17 22:44:54,437 - __main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-17 22:44:54,787 - __mp_main__ - INFO - 读取到的API_KEY: 3d70d2b6241d32aa5d8c0a2f7a4ab5d1
+2025-01-17 22:44:54,788 - __mp_main__ - INFO - 机器人启动中...
+2025-01-17 22:44:55,540 - __mp_main__ - INFO - 机器人 「Binbim_ProMax-测试中」 on_ready!
+2025-01-17 22:45:02,187 - __main__ - INFO - 程序被手动终止。
