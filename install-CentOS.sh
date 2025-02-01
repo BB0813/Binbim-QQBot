@@ -10,6 +10,6 @@ sudo yum groupinstall "Development Tools" -y
 sudo yum install python3 python3-pip -y
 
 # 安装必要的 Python 库
-pip3 install psutil aiohttp qq-bot PyYAML regex
+pip3 install -r requirements.txt
 
 echo "所有库已成功安装！"
