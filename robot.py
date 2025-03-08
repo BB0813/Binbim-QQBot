@@ -18,6 +18,8 @@ from botpy import logging as botpy_logging
 from botpy.client import Client, Intents  # 从 botpy.client 模块导入 Client 和 Intents 类
 from botpy.message import Message
 from botpy.ext.cog_yaml import read
+import platform  # 添加在其他 import 语句附近
+import cpuinfo
 
 # 设置日志配置
 logger = logging.getLogger(__name__)
@@ -171,6 +173,17 @@ async def ping_test(domain):
 
 def get_system_status():
     try:
+        # 获取 CPU 型号名称
+        cpu_model = ""
+        try:
+            with open('/proc/cpuinfo', 'r') as f:
+                for line in f:
+                    if 'model name' in line:
+                        cpu_model = line.split(':')[1].strip()
+                        break
+        except:
+            cpu_model = platform.processor()
+
         cpu_usage = psutil.cpu_percent(interval=1)
         memory_info = psutil.virtual_memory()
         total_memory = memory_info.total / (1024 * 1024)
@@ -182,6 +195,16 @@ def get_system_status():
         used_disk = disk_info.used / (1024 * 1024 * 1024)
         disk_usage = (used_disk / total_disk) * 100
         
+        # 获取系统信息
+        system_info = {
+            'system': platform.system(),
+            'version': platform.version(),
+            'machine': platform.machine(),
+            'processor': cpu_model,  # 使用从 /proc/cpuinfo 读取的 CPU 信息
+            'cpu_cores': psutil.cpu_count(logical=False),  # 物理核心数
+            'cpu_threads': psutil.cpu_count(logical=True)  # 逻辑核心数
+        }
+        
         # 计算运行时间
         total_seconds = time.time() - start_time
         days = total_seconds // (24 * 3600)
@@ -189,10 +212,10 @@ def get_system_status():
         minutes = (total_seconds % (24 * 3600) % 3600) // 60
         seconds = total_seconds % 60
 
-        return cpu_usage, memory_usage, disk_usage, (days, hours, minutes, seconds)
+        return cpu_usage, memory_usage, disk_usage, (days, hours, minutes, seconds), system_info
     except Exception as e:
         logger.error(f"获取系统状态时发生错误：{e}")
-        return None, None, None, None
+        return None, None, None, None, None
 
 # 自定义客户端类
 class MyClient(Client):
@@ -215,12 +238,18 @@ class MyClient(Client):
 
         global is_running
         reply_content = ""
+        # 在 MyClient 类的 on_at_message_create 方法中修改运行状态的处理部分
+        # 在 MyClient 类中修改显示部分
         if content == "运行状态":
-            cpu_usage, memory_usage, disk_usage, runtime = get_system_status()
+            cpu_usage, memory_usage, disk_usage, runtime, system_info = get_system_status()
             if cpu_usage is not None:  # 确保状态正常
                 days, hours, minutes, seconds = runtime
                 reply_content = (
                     f"当前状态：运行中\n"
+                    f"系统信息：{system_info['system']} {system_info['version']}\n"
+                    f"处理器：{system_info['processor']}\n"
+                    f"核心数：{system_info['cpu_cores']}核心{system_info['cpu_threads']}线程\n"
+                    f"处理器架构：{system_info['machine']}\n"
                     f"CPU占用：{cpu_usage}%\n"
                     f"内存占用：{memory_usage:.2f}%\n"
                     f"存储占用：{disk_usage:.2f}%\n"
